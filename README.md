@@ -5,3 +5,5 @@ Pesquisas de satisfação frequentemente coletam dados textuais relacionados a e
 A análise de emoções pode complementar a análise textual e gerar novos insights para tomada de decisão.
 
 <img src="p1.jpg">
+
+https://github.com/GilbertoRadecki/Analise-de-Emocoes---PNL/blob/main/Analise_de_Emocoes.pdf
