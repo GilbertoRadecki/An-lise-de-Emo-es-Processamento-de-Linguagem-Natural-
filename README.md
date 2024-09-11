@@ -2,4 +2,4 @@
 
 O objetivo desse trabalho é demonstrar como a análise de emoções pode ser aplicada no contexto da avaliação de produtos e serviços.
 
-<img src="p1.jpg" width="500" height="600">
+<img src="p1.jpg">
