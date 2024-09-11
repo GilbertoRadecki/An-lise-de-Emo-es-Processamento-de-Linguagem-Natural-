@@ -1,0 +1,91 @@
+---
+title: "Análise de Emoções"
+author: "Gilberto Rodrigo Radecki"
+date: "2024-09-11"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+## Resumo
+
+Aplicação de técnicas de Processamento de Linguagem Natural para análise de Emoções em avaliações de produtos e serviços no idioma português.
+
+**A análise de emoções pode complementar a análise de sentimentos, permitindo não apenas avaliar se uma avaliação é positiva, negativa ou neutra, como também verificar quais sentimentos estão associados à experiência do cliente.**
+
+## Análise de Emoções
+
+A análise de emoções e a análise de sentimentos são subcampos do Processamento de Linguagem Natural que, embora frequentemente usadas de forma intercambiável, têm diferenças importantes em suas abordagens, objetivos e métodos.
+
+### Análise de Sentimentos
+
+A análise de sentimentos é um processo que visa identificar, extrair e quantificar a opinião expressa em um texto. Normalmente, esta análise categoriza o sentimento em classes gerais, como positivo, negativo ou neutro. Em alguns casos, ela pode ir além, identificando o grau de positividade ou negatividade (por exemplo, "muito positivo" ou "ligeiramente negativo"). Essa técnica é amplamente usada em contextos como em análise de avaliações de produtos ou serviços, monitoramento de mídia social e análise de feedback de clientes. O foco principal da análise de sentimentos é detectar a polaridade da opinião expressa e entender a direção geral da emoção, sem necessariamente capturar a complexidade das emoções envolvidas.
+
+### Análise de Emoções
+
+Por outro lado, a análise de emoções aprofunda-se na compreensão de sentimentos específicos expressos no texto, identificando uma gama mais ampla e complexa de emoções humanas. Em vez de apenas determinar se o sentimento é positivo ou negativo, a análise de emoções tenta reconhecer emoções específicas, como alegria, tristeza, raiva, surpresa, medo, nojo, etc. As aplicações da análise de emoções incluem: Estudo de reações emocionais a campanhas publicitárias. Análise de discursos políticos para entender a resposta emocional do público. Detecção de estados emocionais em interações de suporte ao cliente. \### A Roda de Emoções de Plutchik A Roda de Emoções de Plutchik é um modelo psicológico desenvolvido por Robert Plutchik em 1980 para explicar como as emoções humanas se inter-relacionam. Esse modelo apresenta as emoções de uma forma visual e dinâmica, organizando-as em um diagrama circular que lembra uma flor ou roda, daí o nome "Roda de Emoções". Plutchik identificou oito emoções básicas, universais e primárias, que ele acreditava serem comuns a todos os seres humanos. Estas são: Alegria Confiança Medo Surpresa Tristeza Nojo Raiva Antecipação (Ansiedade)
+
+### Objetivos
+
+O objetivo desse trabalho é demonstrar como a análise de emoções pode ser aplicada no contexto da avaliação de produtos e serviços.
+
+Os dados utilizados neste exemplo são compostos de avaliações de clientes de uma loja de departamentos muito famosa aqui no Brasil.
+
+```         
+install.packages("syuzhet") # Responsável pela análise de emoções e sentimentos
+install.packages("udpipe") # Pacote com funções úteis de processamento de linguagem natural, POS tagging, tokenização e lematização, etc.
+install.packages("fmsb") # Para plotar o radar de emoções
+library(syuzhet)
+library(udpipe)
+library(fmsb)
+# Fazer o download do modelo de língua portuguesa
+pm <- udpipe_download_model(language = "portuguese-bosque")
+# Lendo os dados
+data <- read.csv("b2w.csv",header = T,sep = ",",encoding = "utf-8")
+# Carregando o modelo de língua portuguesa
+up_ptmodel <- udpipe_load_model(file=pm$file_model)
+# Selecionando um texto de exemplo
+txt <- data[t,2]
+# Removendo a pontuação
+txt <- gsub('[[:punct:] ]+',' ',txt)
+# Realizando anotações - lematização, tokenização, pos tagging e features
+notes <- udpipe_annotate(up_ptmodel, x=txt)
+notes <- as.data.frame(notes)
+# Vou aplicar a função get_nrc_sentiments sobre os lemas do texto de exemplo
+lemas <- paste(notes$lemma, collapse = " ")
+# Aplicando a análise de sentimentos
+sent <- get_nrc_sentiment(lemas, language = "portuguese")
+# Separando as duas últimas colunas do data frame
+scores <- sent[,9:10]
+rownames(scores) <- "Qtde."
+sent <- sent[,1:8]
+colnames(sent) <- c("Raiva", "Ansiedade", "Nojo", "Medo", "Alegria", "Tristeza", "Surpresa", "Confiança")
+# Construindo um gráfico de sentimentos. Para isso, precisamos adicionar valores mínimos
+# e máximos ao data frame de sentimentos
+sent <- rbind(rep(6,8) , rep(0,8) , sent)
+radarchart(sent,
+           pcol = "green",
+           seg = size,
+           plwd = 4,
+           cglcol = "grey",
+           cglty = 1,
+           axislabcol = "grey",
+           title = "Radar de Emoções")
+```
+
+### Resultados
+
+*Entrega dentro do prazo recomendo ótimo produto Não irão se arrepender* ![](C:/Users/gilbe/Downloads/p1.jpg){width="2200"}
+
+*Balcão bonito Entrega no prazo Material frágil Veio faltando parafusos para fixação do tampo assim como faltou a proteção cor preta atrás do tampo que aparece na imagem Montagem fácil mas o manual de instruções poderia ser mais completo Não recomendo pela falta dos parafusos e da proteção* ![](C:/Users/gilbe/Downloads/p2.jpg){width="2200"}
+
+*Bem macio e felpudo recomendo Preço imbatível e entrega rápida Compraria outro quando precisar* ![](C:/Users/gilbe/Downloads/p3.jpg)
+
+*O parceiro das Lojas Americanas Tudo House RP Tudogaz enviou o produto mal embalado com o gabinete arranhado sem lacres de entrada com cano de exaustão amassado o gabinete arranhado e faltando o manual A aparência estava tão ruim que a concessionária autorizada recusou se a instalar o aquecedor Já pedi o cancelamento da compra e estou aguardando a burocracia do site para reaver o que paguei Recomendo o produto tanto que já comprei outro idêntico em outra loja mas advirto os clientes a evitarem comprar nesse parceiro das Americanas* ![](C:/Users/gilbe/Downloads/p4.jpg)
+
+*Passei pra dizer que podem comprar que chegou bem protegido é dois dias antes do previsto* 
+![](C:/Users/gilbe/Downloads/p5.jpg)
+
+## Conclusão
+
+A análise de emoções pode complementar a análise de sentimentos, permitindo não apenas avaliar se uma avaliação é positiva, negativa ou neutra, como também verificar quais sentimentos estão associados à experiência do clente.
